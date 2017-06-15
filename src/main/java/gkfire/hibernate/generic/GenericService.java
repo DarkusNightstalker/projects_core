@@ -9,6 +9,7 @@ import gkfire.hibernate.AliasList;
 import gkfire.hibernate.CriterionList;
 import gkfire.hibernate.generic.interfac.IGenericDao;
 import gkfire.hibernate.generic.interfac.IGenericService;
+import gkfire.model.interfac.EntityActivate;
 import java.io.Serializable;
 import java.util.List;
 import org.hibernate.criterion.Criterion;
@@ -24,6 +25,14 @@ public abstract class GenericService<T, ID extends Serializable> implements IGen
 
     protected abstract IGenericDao<T, ID> getDao();
 
+    @Override
+    public boolean isActive(ID id) {
+        if(EntityActivate.class.isAssignableFrom(getDao().getObjectClass())){
+            return (boolean) getDao().getByHQL("SELECT e.active FROM "+getClassName()+" e WHERE e.id =?",id);
+        }else{
+            throw new UnsupportedOperationException("This methos not supportes not EntityActivate Objects");
+        }
+    }
     @Override
     public Serializable save(T object) {
         return getDao().save(object);

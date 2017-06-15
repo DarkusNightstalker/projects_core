@@ -26,6 +26,14 @@ public interface IGenericService<T, ID extends Serializable> {
      * @param object nuevo objeto llena con sus relaciones
      * @return retorna el ID del objeto subido.
      */
+    public boolean isActive(ID id);
+    /**
+     * Guarda un nuevo registro en la base de datos. Sus relaciones deben estar
+     * completas, puesto que puede ocurrir un error al subir a la base de datos.
+     *
+     * @param object nuevo objeto llena con sus relaciones
+     * @return retorna el ID del objeto subido.
+     */
     public Serializable save(T object);
 
     /**
