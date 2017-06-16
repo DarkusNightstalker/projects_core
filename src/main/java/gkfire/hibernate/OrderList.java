@@ -7,6 +7,7 @@
 package gkfire.hibernate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import org.hibernate.criterion.Order;
 
@@ -19,6 +20,9 @@ public class OrderList extends ArrayList<Order> {
     public OrderList() {
     }
 
+    public OrderList(Order... c) {
+        super(Arrays.asList(c));
+    }
     public OrderList(Collection<? extends Order> c) {
         super(c);
     }
