@@ -26,33 +26,17 @@ public abstract class AbstractSessionBean<USER extends Object> implements java.i
     protected AbstractImport abstractImport;
     protected AsynchronousTask asynchronousTask;
     protected USER currentUser;
-    protected List<Throwable> errors;
 
     public AbstractSessionBean() {
         messages = new ArrayList<>();
-        errors = new ArrayList();
     }
 
-    public void printErrors(PrintWriter writer) {
-        while (!errors.isEmpty()) {
-            errors.remove(0).printStackTrace(writer);
-        }
-    }
+    public abstract void printErrors(PrintWriter writer);
 
-    public String addError(Throwable e) {
-        e.printStackTrace();
-        errors.add(e);
-        return String.format("%04d", errors.size());
-    }
+    public abstract String addError(Throwable e);
 
-    public String printErrorStack() {
-        StringWriter error = new StringWriter();
-        if (!errors.isEmpty()) {
-            errors.remove(0).printStackTrace(new PrintWriter(error));
-        }
-        return error.toString();
-    }
-
+    public abstract String printErrorStack();
+    
     public void onLoad() {
         try {
             loadable.onLoad(false);
@@ -158,20 +142,6 @@ public abstract class AbstractSessionBean<USER extends Object> implements java.i
      */
     public void setCurrentUser(USER currentUser) {
         this.currentUser = currentUser;
-    }
-
-    /**
-     * @return the errors
-     */
-    public List<Throwable> getErrors() {
-        return errors;
-    }
-
-    /**
-     * @param errors the errors to set
-     */
-    public void setErrors(List<Throwable> errors) {
-        this.errors = errors;
     }
 
     /**
