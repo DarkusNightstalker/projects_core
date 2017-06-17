@@ -14,6 +14,7 @@ import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.util.FileResolver;
 import net.sf.jasperreports.engine.util.SimpleFileResolver;
 
 public class ReportExportGeneric implements Serializable {
@@ -26,12 +27,16 @@ public class ReportExportGeneric implements Serializable {
     protected interface FunctionConnection {
         Connection apply() throws Exception;
     }
+    @FunctionalInterface
+    protected interface FunctionFileResolver {
+        FileResolver apply() throws Exception;
+    }
     protected String pathJasper;
     protected String fileName;
     protected AbstractSessionBean sessionBean;
     protected Map<String, Object> params;
     protected ReportContentType contentType;
-    protected String reportsDirPath;
+    protected FunctionFileResolver functionFileResolver;
     protected FunctionOutputStream functionOutputstream;
     protected Function<String, InputStream> functionInputstream;
     protected FunctionConnection functionConnection;
@@ -75,18 +80,17 @@ public class ReportExportGeneric implements Serializable {
 
     protected void execute(JRExporter exporter) throws Exception {
         InputStream is = functionInputstream.apply(pathJasper);
-        File reportsDir = new File(reportsDirPath);
-        this.params.put("REPORT_FILE_RESOLVER", new SimpleFileResolver(reportsDir));
+      
+        this.params.put("REPORT_FILE_RESOLVER", functionFileResolver.apply());
 
         JasperPrint jasperPrint = JasperFillManager.fillReport(is, this.params, functionConnection.apply());
-        try (OutputStream os = functionOutputstream.apply()) {
-            exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
-            exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, os);
-            exporter.exportReport();
-            FacesContext.getCurrentInstance().responseComplete();
-            os.flush();
-            os.close();
-        }
+        OutputStream os = functionOutputstream.apply();
+        exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, os);
+        exporter.exportReport();
+        FacesContext.getCurrentInstance().responseComplete();
+        os.flush();
+        os.close();
         System.gc();
     }
 
