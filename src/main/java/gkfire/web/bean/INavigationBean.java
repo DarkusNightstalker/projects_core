@@ -11,6 +11,13 @@ package gkfire.web.bean;
  */
 public interface INavigationBean extends java.io.Serializable {
 
+    public String getIcon();
+
+    /**
+     * @param content the content to set
+     */
+    public void setIcon(String icon);
+    
     public String getContent();
 
     /**

@@ -147,7 +147,7 @@ public interface IGenericDao<T, ID extends java.io.Serializable> {
      *
      * @return retorna el resultado del conteo.
      */
-    public Integer count();
+    public Number count();
 
     /**
      * Se debe crear una lista de objetos Criterion de Hibernate: <ul>

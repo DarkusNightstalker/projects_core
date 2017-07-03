@@ -74,7 +74,7 @@ public abstract class GenericService<T, ID extends Serializable> implements IGen
     }
 
     @Override
-    public Integer count() {
+    public Number count() {
         return getDao().count();
     }
 

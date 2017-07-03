@@ -27,6 +27,8 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.persister.entity.AbstractEntityPersister;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 /**
  *
@@ -38,6 +40,8 @@ import org.hibernate.persister.entity.AbstractEntityPersister;
 public class GenericDao<T, ID extends Serializable> implements
         IGenericDao<T, ID> {
 
+    @Autowired
+    @Qualifier("sessionFactory")
     protected SessionFactory sessionFactory;
     private final Class<T> oClass;
 
@@ -136,8 +140,8 @@ public class GenericDao<T, ID extends Serializable> implements
     }
 
     @Override
-    public Integer count() {
-        return (Integer) getSessionFactory().getCurrentSession()
+    public Number count() {
+        return (Number) getSessionFactory().getCurrentSession()
                 .createCriteria(oClass).setProjection(Projections.rowCount())
                 .uniqueResult();
     }
