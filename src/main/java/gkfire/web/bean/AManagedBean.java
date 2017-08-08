@@ -7,6 +7,7 @@ package gkfire.web.bean;
 
 import gkfire.hibernate.generic.interfac.IGenericService;
 import gkfire.web.util.BeanUtil;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.util.logging.Level;

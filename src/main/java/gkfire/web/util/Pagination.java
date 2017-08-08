@@ -7,6 +7,7 @@ package gkfire.web.util;
 
 import gkfire.hibernate.AliasList;
 import gkfire.hibernate.CriterionList;
+import gkfire.hibernate.SpecialCriterionList;
 import gkfire.hibernate.generic.interfac.IGenericService;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -118,18 +119,21 @@ public class Pagination<T> implements Serializable {
         totalRecords = null;
         CriterionList criterionList = null;
         AliasList aliasList = null;
+        SpecialCriterionList specialCriterionList = null;
         for (Object o : variant) {
             if (o instanceof CriterionList) {
                 criterionList = (CriterionList) o;
             } else if (o instanceof AliasList) {
                 aliasList = (AliasList) o;
-            } else {
+            } else if (o instanceof SpecialCriterionList) {
+                specialCriterionList = (SpecialCriterionList) o;
+            }else {
                 continue;
             }
         }
         if (criterionList != null) {
             try {
-                totalRecords = service.countRestrictions(criterionList, aliasList).longValue();
+                totalRecords = service.countRestrictions(criterionList,specialCriterionList,aliasList).longValue();
             } catch (Exception e) {
                 totalRecords = 0L;
                 e.printStackTrace();

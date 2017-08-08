@@ -7,6 +7,7 @@ package gkfire.hibernate.generic.interfac;
 
 import gkfire.hibernate.AliasList;
 import gkfire.hibernate.CriterionList;
+import gkfire.hibernate.SpecialCriterionList;
 import java.util.List;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
@@ -22,8 +23,13 @@ public interface IGenericDao<T, ID extends java.io.Serializable> {
 
     public Class<T> getObjectClass();
 
+    public boolean isActive(ID id);
+    
     public Object getByHQL(String hql, String[] name, Object... parameters) ;
+    
     public Number countRestrictions(CriterionList criterionList, AliasList aliasList);
+    
+    public Number countRestrictions(CriterionList criterionList,SpecialCriterionList specialCriterionList, AliasList aliasList);
 
     /**
      * Guarda un nuevo registro en la base de datos. Sus relaciones deben estar
@@ -32,7 +38,7 @@ public interface IGenericDao<T, ID extends java.io.Serializable> {
      * @param object nuevo objeto llena con sus relaciones
      * @return retorna el ID del objeto subido.
      */
-    public int save(T object);
+    public ID save(T object);
 
     public List listHQL(String hql, String[] name, Object... parameters) ;
     /**

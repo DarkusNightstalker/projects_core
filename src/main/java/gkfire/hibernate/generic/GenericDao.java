@@ -8,6 +8,7 @@ package gkfire.hibernate.generic;
 import gkfire.hibernate.AliasList;
 import gkfire.hibernate.CriterionList;
 import gkfire.hibernate.OrderList;
+import gkfire.hibernate.SpecialCriterionList;
 import gkfire.hibernate.criterion.AssociationCriterion;
 import gkfire.hibernate.generic.interfac.IGenericDao;
 import gkfire.model.interfac.EntityActivate;
@@ -37,8 +38,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @param <ID>
  */
 @org.springframework.transaction.annotation.Transactional(readOnly = true)
-public class GenericDao<T, ID extends Serializable> implements
-        IGenericDao<T, ID> {
+public class GenericDao<T, ID extends Serializable> implements IGenericDao<T, ID> {
 
     @Autowired
     @Qualifier("sessionFactory")
@@ -50,14 +50,26 @@ public class GenericDao<T, ID extends Serializable> implements
     }
 
     @Override
+    public boolean isActive(ID id) {
+        if (EntityActivate.class.isAssignableFrom(this.oClass)) {
+            return (boolean) getByHQL("SELECT e.active FROM " + this.oClass.getSimpleName() + " e WHERE e.id =?", id);
+        } else {
+            throw new UnsupportedOperationException("This method not supportes not EntityActivate Objects");
+        }
+    }
+
+    @Override
     public Class<T> getObjectClass() throws HibernateException {
         return this.oClass;
     }
+    
+    //<editor-fold defaultstate="collapsed" desc="Transactional">
+    
 
     @org.springframework.transaction.annotation.Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
-    public int save(T objeto) throws HibernateException {
-        return (Integer) getSessionFactory().getCurrentSession().save(objeto);
+    public ID save(T objeto) throws HibernateException {
+        return (ID) getSessionFactory().getCurrentSession().save(objeto);
     }
 
     @org.springframework.transaction.annotation.Transactional(readOnly = false, rollbackFor = Exception.class)
@@ -90,6 +102,10 @@ public class GenericDao<T, ID extends Serializable> implements
         getSessionFactory().getCurrentSession().saveOrUpdate(object);
     }
 
+    public void commit() {
+
+    }
+
     @org.springframework.transaction.annotation.Transactional(readOnly = false, rollbackFor = Exception.class)
     @Override
     public void delete(T objeto) throws HibernateException {
@@ -100,6 +116,7 @@ public class GenericDao<T, ID extends Serializable> implements
             getSessionFactory().getCurrentSession().delete(objeto);
         }
     }
+//</editor-fold>
 
     @Override
     public List list() throws HibernateException {
@@ -164,6 +181,7 @@ public class GenericDao<T, ID extends Serializable> implements
         return criteria.list();
     }
 
+    @Override
     public Number countRestrictions(List<Criterion> listCriterion) {
 
         Criteria criteria = getSessionFactory().getCurrentSession()
@@ -340,6 +358,8 @@ public class GenericDao<T, ID extends Serializable> implements
                 for (Order item : (OrderList) c) {
                     criteria.addOrder(item);
                 }
+            } else if (c instanceof SpecialCriterionList) {
+                ((SpecialCriterionList) c).make(criteria);
             } else {
                 throw new IllegalArgumentException("Illegal argument");
             }
@@ -369,6 +389,8 @@ public class GenericDao<T, ID extends Serializable> implements
                 for (Order item : (OrderList) c) {
                     criteria.addOrder(item);
                 }
+            } else if (c instanceof SpecialCriterionList) {
+                ((SpecialCriterionList) c).make(criteria);
             } else {
                 throw new IllegalArgumentException("Illegal argument");
             }
@@ -435,6 +457,27 @@ public class GenericDao<T, ID extends Serializable> implements
         return rowCount;
     }
 
+    public Number countRestrictions(CriterionList criterionList, SpecialCriterionList specialCriterionList, AliasList aliasList) {
+        Criteria criteria = getSessionFactory().getCurrentSession()
+                .createCriteria(oClass);
+
+        for (Criterion item : criterionList) {
+            criteria.add(item);
+        }
+        if (aliasList != null) {
+            Set<String> properties = aliasList.keySet();
+            for (String property : properties) {
+                AliasList.AliasItem item = aliasList.get(property);
+                criteria.createAlias(property, item.getAlias(), item.getJoinType());
+            }
+        }
+        if (specialCriterionList != null) {
+            specialCriterionList.make(criteria);
+        }
+        Number rowCount = (Number) criteria.setProjection(Projections.countDistinct(getSessionFactory().getClassMetadata(oClass).getIdentifierPropertyName())).uniqueResult();
+        return rowCount;
+    }
+
     @Override
     public List listHQL(String hql, Object... parameters) {
         Query query = getSessionFactory().getCurrentSession().createQuery(hql);
@@ -456,6 +499,7 @@ public class GenericDao<T, ID extends Serializable> implements
         }
         return query.uniqueResult();
     }
+
     @Override
     public List listHQL(String hql, String[] name, Object... parameters) {
         Query query = getSessionFactory().getCurrentSession().createQuery(hql);

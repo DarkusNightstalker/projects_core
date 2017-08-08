@@ -11,28 +11,35 @@ package gkfire.util;
  */
 public enum Month {
 
-    Enero("01"),
-    Febrero("02"),
-    Marzo("03"),
-    Abril("04"),
-    Mayo("05"),
-    Junio("06"),
-    Julio("07"),
-    Agosto("08"),
-    Septiembre("09"),
-    Octubre("10"),
-    Noviembre("11"),
-    Diciembre("12");
+    Enero("01","Ene"),
+    Febrero("02","Feb"),
+    Marzo("03","Mar"),
+    Abril("04","Abr"),
+    Mayo("05","May"),
+    Junio("06","Jun"),
+    Julio("07","Jul"),
+    Agosto("08","Ago"),
+    Septiembre("09","Sep"),
+    Octubre("10","Oct"),
+    Noviembre("11","Nov"),
+    Diciembre("12","Dic");
 
     private final String number;
+    private final String abbr;
 
-    private Month(String number) {
+    private Month(String number,String abbr) {
         this.number = number;
+        this.abbr = abbr;
     }
 
     public String getNumber() {
         return number;
     }
+
+    public String getAbbr() {
+        return abbr;
+    }
+    
 
     public static Month byOrdinal(Number ordinal) {
         Month[] months = Month.values();

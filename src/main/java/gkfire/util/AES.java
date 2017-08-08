@@ -13,7 +13,7 @@ import sun.misc.BASE64Encoder;
 
 /**
  *
- * @author CIUNAS
+ * @author Darkus Nightmare
  */
 public class AES {
     

@@ -7,6 +7,7 @@ package gkfire.hibernate.generic.interfac;
 
 import gkfire.hibernate.AliasList;
 import gkfire.hibernate.CriterionList;
+import gkfire.hibernate.SpecialCriterionList;
 import java.io.Serializable;
 import java.util.List;
 import org.hibernate.criterion.Criterion;
@@ -27,6 +28,7 @@ public interface IGenericService<T, ID extends Serializable> {
      * @return retorna el ID del objeto subido.
      */
     public boolean isActive(ID id);
+
     /**
      * Guarda un nuevo registro en la base de datos. Sus relaciones deben estar
      * completas, puesto que puede ocurrir un error al subir a la base de datos.
@@ -35,6 +37,8 @@ public interface IGenericService<T, ID extends Serializable> {
      * @return retorna el ID del objeto subido.
      */
     public Serializable save(T object);
+
+    public Number countRestrictions(CriterionList criterionList, SpecialCriterionList specialCriterionList, AliasList aliasList);
 
     /**
      * Realiza un <code>update</code> en la base de datos se debe tener en
@@ -45,7 +49,8 @@ public interface IGenericService<T, ID extends Serializable> {
     public void update(T object);
 
     public int updateHQL(String hql) throws Exception;
-    public int updateHQL(String hql,Object... parameters) throws Exception;
+
+    public int updateHQL(String hql, Object... parameters) throws Exception;
 
     /**
      * Realiza un <code>insert</code>, <code>update</code>, <code>delete</code>,
@@ -79,6 +84,7 @@ public interface IGenericService<T, ID extends Serializable> {
      * @return Lista de Objetos de la clase.
      */
     public List listHQL(String hql);
+
     /**
      * Metodo que retorna una lista de objetos, con una consulta HQL, es muy
      * similar a la consulta SQL.
@@ -87,7 +93,8 @@ public interface IGenericService<T, ID extends Serializable> {
      * @param parameters
      * @return Lista de Objetos de la clase.
      */
-    public java.util.List listHQL(String hql,Object... parameters);
+    public java.util.List listHQL(String hql, Object... parameters);
+
     /**
      * Metodo que retorna una lista de objetos, con una consulta HQL, es muy
      * similar a la consulta SQL.
@@ -98,7 +105,8 @@ public interface IGenericService<T, ID extends Serializable> {
      * @param parameters
      * @return Lista de Objetos de la clase.
      */
-    public java.util.List listHQLPage(String hql,int page,int recordsPerPage,Object... parameters);
+    public java.util.List listHQLPage(String hql, int page, int recordsPerPage, Object... parameters);
+
     /**
      * Metodo que retorna una lista de objetos, con una consulta HQL, es muy
      * similar a la consulta SQL.
@@ -107,6 +115,7 @@ public interface IGenericService<T, ID extends Serializable> {
      * @return Lista de Objetos de la clase.
      */
     public Object getByHQL(String hql);
+
     /**
      * Metodo que retorna una lista de objetos, con una consulta HQL, es muy
      * similar a la consulta SQL.
@@ -115,7 +124,7 @@ public interface IGenericService<T, ID extends Serializable> {
      * @param parameters Parametros de la consulta
      * @return Objeto de la clase.
      */
-    public Object getByHQL(String hql,Object... parameters);
+    public Object getByHQL(String hql, Object... parameters);
 
     /**
      * Metodo que ordena las columnas en forma ascendente o descendente,
@@ -194,9 +203,10 @@ public interface IGenericService<T, ID extends Serializable> {
     public Number rowNumber(ID id, boolean withDisabled);
 
     public Number countRestrictions(List<Criterion> listCriterion);
-    public Number countRestrictions(CriterionList criterionList,AliasList aliasList);
-    
+
+    public Number countRestrictions(CriterionList criterionList, AliasList aliasList);
+
     public String getClassName();
-    
-    public List addRestrictionsVariant(int rows,int page,Object... variant);
+
+    public List addRestrictionsVariant(int rows, int page, Object... variant);
 }
