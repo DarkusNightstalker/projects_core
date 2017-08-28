@@ -11,6 +11,7 @@ public class DateUtil {
     private static Map<String,SimpleDateFormat> formats = new HashMap<>();
 
     public static Date parse(String format, String stringDate) throws ParseException {
+        if(stringDate == null) return null;
         SimpleDateFormat sdf = formats.get(format);
         if(sdf == null){
             sdf = new SimpleDateFormat(format);
